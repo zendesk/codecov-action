@@ -32,6 +32,18 @@ inputs:
   functionalities:
     description: 'Comma-separated list, see the README for options and their usage'
     required: false
+  gcov:
+    description: 'Run with gcov support'
+    required: false
+  gcov_args:
+    description: 'Extra arguments to pass to gcov'
+    required: false
+  gcov_ignore:
+    description: 'Paths to ignore during gcov gathering'
+    required: false
+  gcov_include:
+    description: 'Paths to include during gcov gathering'
+    required: false
   move_coverage_to_trash:
     description: 'Move discovered coverage reports to the trash'
     required: false
@@ -74,9 +86,15 @@ inputs:
   working-directory:
     description: 'Directory in which to execute codecov.sh'
     required: false
+  xcode:
+    description: 'Run with xcode support'
+    required: false
+  xcode_archive_path:
+    description: 'Specify the xcode archive path. Likely specified as the -resultBundlePath and should end in .xcresult'
+    required: false
 branding:
   color: 'red'
   icon: 'umbrella'
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'

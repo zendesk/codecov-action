@@ -8,13 +8,14 @@ jobs:
         os: [macos-latest, windows-latest, ubuntu-latest] 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Upload coverage to Codecov (script)
         uses: ./
         with:
           files: ./coverage/script/coverage-final.json
           flags: script,${{ matrix.os }}
           name: codecov-script
+          verbose: true
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
@@ -22,6 +23,7 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: demo,${{ matrix.os }}
           name: codecov-demo
+          verbose: true
       - name: Upload coverage to Codecov (version)
         uses: ./
         with:
@@ -30,6 +32,7 @@ jobs:
           flags: version,${{ matrix.os }}
           name: codecov-version
           version: v0.1.0_8880
+          verbose: true
   run:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -37,7 +40,7 @@ jobs:
         os: [macos-latest, windows-latest, ubuntu-latest]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install dependencies
         run: npm install
       - name: Lint
@@ -50,6 +53,7 @@ jobs:
           files: ./coverage/script/coverage-final.json
           flags: script,${{ matrix.os }}
           name: codecov-script
+          verbose: true
       - name: Upload coverage to Codecov (demo)
         uses: ./
         with:
@@ -57,6 +61,7 @@ jobs:
           file: ./coverage/coverage-final.json
           flags: demo,${{ matrix.os }}
           name: codecov-demo
+          verbose: true
       - name: Upload coverage to Codecov (version)
         uses: ./
         with:
@@ -65,3 +70,4 @@ jobs:
           flags: version,${{ matrix.os }}
           name: codecov-version
           version: v0.1.0_8880
+          verbose: true

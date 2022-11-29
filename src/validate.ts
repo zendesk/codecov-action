@@ -12,7 +12,13 @@ import {
   setFailure,
 } from './helpers';
 
-const verify = async (filename: string, platform: string, version: string) => {
+const verify = async (
+    filename: string,
+    platform: string,
+    version: string,
+    verbose: boolean,
+    failCi: boolean,
+): Promise<void> => {
   try {
     const uploaderName = getUploaderName(platform);
 
@@ -24,15 +30,21 @@ const verify = async (filename: string, platform: string, version: string) => {
 
     // Get SHASUM and SHASUM signature files
     console.log(`${getBaseUrl(platform, version)}.SHA256SUM`);
-    const shasumRes = await fetch(
+    const shasumRes = await fetch.default(
         `${getBaseUrl(platform, version)}.SHA256SUM`,
     );
     const shasum = await shasumRes.text();
+    if (verbose) {
+      console.log(`Received SHA256SUM ${shasum}`);
+    }
 
-    const shaSigRes = await fetch(
+    const shaSigRes = await fetch.default(
         `${getBaseUrl(platform, version)}.SHA256SUM.sig`,
     );
     const shaSig = await shaSigRes.text();
+    if (verbose) {
+      console.log(`Received SHA256SUM signature ${shaSig}`);
+    }
 
     // Verify shasum
     const verified = await openpgp.verify({
@@ -46,7 +58,7 @@ const verify = async (filename: string, platform: string, version: string) => {
           verified.signatures[0].keyID.toHex(),
       );
     } else {
-      setFailure('Codecov: Error validating SHASUM signature', true);
+      setFailure('Codecov: Error validating SHASUM signature', failCi);
     }
 
     const calculateHash = async (filename: string) => {
@@ -69,11 +81,11 @@ const verify = async (filename: string, platform: string, version: string) => {
       setFailure(
           'Codecov: Uploader shasum does not match -- ' +
             `uploader hash: ${hash}, public hash: ${shasum}`,
-          true,
+          failCi,
       );
     }
   } catch (err) {
-    setFailure(`Codecov: Error validating uploader: ${err.message}`, true);
+    setFailure(`Codecov: Error validating uploader: ${err.message}`, failCi);
   }
 };
 export default verify;

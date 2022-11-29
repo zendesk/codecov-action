@@ -25,6 +25,10 @@ const buildExec = () => {
   const file = core.getInput('file');
   const files = core.getInput('files');
   const flags = core.getInput('flags');
+  const gcov = core.getInput('gcov');
+  const gcovArgs = core.getInput('gcov_args');
+  const gcovIgnore = core.getInput('gcov_ignore');
+  const gcovInclude = core.getInput('gcov_include');
   const functionalities = core.getInput('functionalities');
   const name = core.getInput('name');
   const os = core.getInput('os');
@@ -41,6 +45,8 @@ const buildExec = () => {
   const url = core.getInput('url');
   const verbose = isTrue(core.getInput('verbose'));
   const workingDir = core.getInput('working-directory');
+  const xcode = core.getInput('xcode');
+  const xcodeArchivePath = core.getInput('xcode_archive_path');
 
   const execArgs = [];
   execArgs.push(
@@ -85,7 +91,7 @@ const buildExec = () => {
     execArgs.push('-e', envVarsArg.join(','));
   }
   if (functionalities) {
-    functionalities.split(',').forEach((f) => {
+    functionalities.split(',').map((f) => f.trim()).forEach((f) => {
       execArgs.push('-X', `${f}`);
     });
   }
@@ -96,15 +102,29 @@ const buildExec = () => {
     execArgs.push('-f', `${file}`);
   }
   if (files) {
-    files.split(',').forEach((f) => {
+    files.split(',').map((f) => f.trim()).forEach((f) => {
       execArgs.push('-f', `${f}`);
     });
   }
   if (flags) {
-    flags.split(',').forEach((f) => {
+    flags.split(',').map((f) => f.trim()).forEach((f) => {
       execArgs.push('-F', `${f}`);
     });
   }
+
+  if (gcov) {
+    execArgs.push('-g');
+  }
+  if (gcovArgs) {
+    execArgs.push('--gcovArgs', `${gcovArgs}`);
+  }
+  if (gcovIgnore) {
+    execArgs.push('--gcovIgnore', `${gcovIgnore}`);
+  }
+  if (gcovInclude) {
+    execArgs.push('--gcovInclude', `${gcovInclude}`);
+  }
+
   if (overrideBranch) {
     execArgs.push('-B', `${overrideBranch}`);
   }
@@ -147,12 +167,20 @@ const buildExec = () => {
   if (workingDir) {
     options.cwd = workingDir;
   }
+  if (xcode && xcodeArchivePath) {
+    execArgs.push('--xc');
+    execArgs.push('--xp', `${xcodeArchivePath}`);
+  }
 
   if (uploaderVersion == '') {
     uploaderVersion = 'latest';
   }
 
-  return {execArgs, options, failCi, os, uploaderVersion};
+  if (verbose) {
+    console.debug({execArgs});
+  }
+
+  return {execArgs, options, failCi, os, uploaderVersion, verbose};
 };
 
 export default buildExec;
