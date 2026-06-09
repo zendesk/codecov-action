@@ -1,3 +1,11 @@
+## v5.5.5
+
+### What's Changed
+* fix: fetch Codecov PGP key from keybase.io/codecovsecops
+
+**Full Changelog**: https://github.com/codecov/codecov-action/compare/v5.5.4..v5.5.5
+
+
 ## v5.5.2
 
 ### What's Changed
